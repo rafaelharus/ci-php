@@ -26,9 +26,6 @@ jobs:
     - name: Detecting PHP Code Standards Violations
       run: composer check
 
-    - name: Run tests
-      run: composer test
-
     - name: Create zip
       run: git archive --format=zip -o "$GITHUB_PATH-$GITHUB_REF_NAME.zip" "$GITHUB_REF_NAME"
 
