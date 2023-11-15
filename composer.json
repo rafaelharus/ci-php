@@ -9,9 +9,6 @@
             "email": "rafael.harus@gmail.com"
         }
     ],
-    "require": {
-        "symfony/console": "^6.3"
-    },
     "scripts": {
         "check": [
             "@cs-check"
