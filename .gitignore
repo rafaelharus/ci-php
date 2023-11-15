@@ -1,0 +1,9 @@
+vendor/
+.idea/
+.vscode/
+.phpcs-cache
+.env
+.phpunit.result.cache
+.phpunit.cache/
+/coverage
+clover.xml
