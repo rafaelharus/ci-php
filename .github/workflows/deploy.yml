@@ -28,11 +28,12 @@ jobs:
 
     - name: Create zip
       run: |
-        git archive -o source-code.tar.gz HEAD
+        git archive -o source-code.tar.gz
       working-directory: ${{ github.workspace }}
 
   deploy:
     runs-on: ubuntu-latest
+    needs: build
     steps:
       - name: Copy via scp
         uses: appleboy/scp-action@master
