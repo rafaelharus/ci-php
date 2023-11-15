@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     tags:
-        - '*'
+        - 'v*'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -28,7 +28,7 @@ jobs:
 
     - name: Create zip
       run: |
-        git archive -o source-code.tar.gz ${{ github.event_name == 'push' && github.ref == 'refs/tags/v*' && github.ref }}
+        git archive -o source-code.tar.gz ${{ github.event_name == 'push' && github.ref == 'refs/tags/v*' && github.ref }} --prefix=my-app
       working-directory: ${{ github.workspace }}
 
   deploy:
