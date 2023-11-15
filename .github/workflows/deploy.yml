@@ -31,25 +31,28 @@ jobs:
         git archive -o source-code.tar.gz HEAD
       working-directory: ${{ github.workspace }}
 
-    - name: Copy via scp
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USERNAME }}
-        port: ${{ secrets.PORT }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: "source-code.tar.gz"
-        target: /home/u508598207/app/pre-deploy/
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Copy via scp
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          port: ${{ secrets.PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "source-code.tar.gz"
+          target: /home/u508598207/app/pre-deploy/
 
-    # - name: Deploy SSH with scp
-    #   uses: appleboy/ssh-action@master
-    #   with:
-    #     host: ${{ secrets.HOST }}
-    #     username: ${{ secrets.USERNAME }}
-    #     key: ${{ secrets.KEY }}
-    #     port: ${{ secrets.PORT }}
-    #     script: |
-    #       cd /var/www/html
-    #       rm -rf $GITHUB_REF_NAME
-    #       unzip -o $GITHUB_REF_NAME.zip
-    #       rm -rf $GITHUB_REF_NAME.zip
+      - name: Deploy SSH with scp
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            mkdir -p /home/u508598207/app/ci-github-php-hostinger/
+            tar -xzf /home/u508598207/app/pre-deploy/source-code.tar.gz -C /home/u508598207/app/ci-github-php-hostinger/
+            cd /home/u508598207/app/ci-github-php-hostinger/
+            composer install --prefer-dist --no-progress --no-suggest
