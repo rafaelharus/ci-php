@@ -28,7 +28,7 @@ jobs:
 
     - name: Create zip
       run: |
-        git archive -o source-code.tar.gz HEAD
+        git archive -o source-code.tar.gz ${{ github.ref }}
       working-directory: ${{ github.workspace }}
 
     - name: Copy via scp
