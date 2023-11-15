@@ -28,7 +28,9 @@ jobs:
 
     - name: Create zip
       run: |
-        git archive -o "$(echo '${{ github.ref }}' | sed 's/[^0-9v.]*//g').tar.gz" $(echo '${{ github.ref }}' | sed 's/[^0-9v.]*//g')
+        TAG_NAME=${GITHUB_REF#refs/tags/}
+        TAG_NUMBER=$(echo $TAG_NAME | sed 's/[^0-9v.]*//g')
+        git archive -o application-ci.tar.gz $TAG_NUMBER
       working-directory: ${{ github.workspace }}
 
     - name: Copy via scp
@@ -38,7 +40,7 @@ jobs:
         username: ${{ secrets.USERNAME }}
         port: ${{ secrets.PORT }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        source: "$(echo '${{ github.ref }}' | sed 's/[^0-9v.]*//g').tar.gz"
+        source: "application-ci.tar.gz"
         target: /home/u508598207/app/pre-deploy/
 
   deploy:
@@ -54,6 +56,6 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             mkdir -p /home/u508598207/app/ci-github-php-hostinger/
-            tar -xzf "/home/u508598207/app/pre-deploy/$(echo ${{ github.ref }}" | sed 's/[^0-9v.]*//g').tar.gz -C /home/u508598207/app/ci-github-php-hostinger/
+            tar -xzf /home/u508598207/app/pre-deploy/application-ci.tar.gz -C /home/u508598207/app/ci-github-php-hostinger/
             cd /home/u508598207/app/ci-github-php-hostinger/
             composer install --prefer-dist --no-progress --no-suggest
