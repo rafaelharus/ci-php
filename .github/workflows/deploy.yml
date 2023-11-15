@@ -1,0 +1,57 @@
+name: Deploy
+
+on:
+  push:
+    tags:
+        - '*'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2 #https://github.com/shivammathur/setup-php
+      with:
+        php-version: '7.4'
+        extensions: ssh2
+
+    - name: Validate composer.json and composer.lock
+      run: composer validate
+
+    - name: Install dependencies
+      run: composer install --prefer-dist --no-progress --no-suggest
+
+    - name: Detecting PHP Code Standards Violations
+      run: composer check
+
+    - name: Run tests
+      run: composer test
+
+    - name: Create zip
+      run: git archive --format=zip -o "$GITHUB_PATH-$GITHUB_REF_NAME.zip" "$GITHUB_REF_NAME"
+
+    - name: Copy via scp
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        port: ${{ secrets.PORT }}
+        source: "$GITHUB_PATH-$GITHUB_REF_NAME.zip"
+        target: /home/u508598207/app/pre-deploy/
+
+
+
+    # - name: Deploy SSH with scp
+    #   uses: appleboy/ssh-action@master
+    #   with:
+    #     host: ${{ secrets.HOST }}
+    #     username: ${{ secrets.USERNAME }}
+    #     key: ${{ secrets.KEY }}
+    #     port: ${{ secrets.PORT }}
+    #     script: |
+    #       cd /var/www/html
+    #       rm -rf $GITHUB_REF_NAME
+    #       unzip -o $GITHUB_REF_NAME.zip
+    #       rm -rf $GITHUB_REF_NAME.zip
