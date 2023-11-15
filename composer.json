@@ -1,4 +1,14 @@
 {
+    "name": "rafaelharus/ci-github-php-hostinger",
+    "description": "Sample PHP project for Hostinger CI",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rafael Harus",
+            "email": "rafael.harus@gmail.com"
+        }
+    ],
     "require": {
         "symfony/console": "^6.3"
     },
