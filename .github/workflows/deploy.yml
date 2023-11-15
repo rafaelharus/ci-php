@@ -28,7 +28,7 @@ jobs:
 
     - name: Create zip
       run: |
-        git archive -o source-code.tar.gz ${{ github.ref }}
+        git archive -o source-code.tar.gz HEAD
       working-directory: ${{ github.workspace }}
 
   deploy:
