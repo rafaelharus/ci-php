@@ -26,28 +26,26 @@ jobs:
     - name: Detecting PHP Code Standards Violations
       run: composer check
 
+    - name: Create zip
+      run: |
+        git archive -o source-code.tar.gz HEAD
+      working-directory: ${{ github.workspace }}
 
+    - name: Copy via scp
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        port: ${{ secrets.PORT }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        source: "source-code.tar.gz"
+        target: /home/u508598207/app/pre-deploy/
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
     steps:
-      - name: Create zip
-        run: |
-          git archive -o source-code.tar.gz HEAD
-        working-directory: ${{ github.workspace }}
-
-      - name: Copy via scp
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          port: ${{ secrets.PORT }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          source: "source-code.tar.gz"
-          target: /home/u508598207/app/pre-deploy/
-
-      - name: Deploy SSH with scp
+      - name: Run ssh command
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
